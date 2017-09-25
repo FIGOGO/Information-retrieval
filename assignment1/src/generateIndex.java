@@ -1,5 +1,4 @@
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -107,13 +106,12 @@ public class generateIndex {
         return luceneDocs;
     }
 
-    public void createIndex() throws IOException{
+    public void createIndex(Analyzer analyzer, String analyzerType) throws IOException{
         Directory dir = FSDirectory.open(Paths.get(indexPath));
-        Analyzer analyzer = new StandardAnalyzer();
-        Analyzer stopAnalyzer = new StopAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         IndexWriter writer = new IndexWriter(dir, iwc);
+        System.out.println("Begin to generate index for " + analyzerType);
 
         File[] files = new File(corpusPath).listFiles();
         for (File file : files) {
@@ -128,8 +126,7 @@ public class generateIndex {
     public static void main(String[] args) {
         try{
             generateIndex generator = new generateIndex();
-            System.out.println("Begin to generate index");
-            generator.createIndex();
+            generator.createIndex(new StandardAnalyzer(), "Standard Analyzer");
             System.out.println("Done for the index");
             System.out.println("Begin the statistics");
             Stats.main(null);
