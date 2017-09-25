@@ -1,10 +1,6 @@
 import java.nio.file.Paths;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.MultiFields;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.index.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
@@ -17,18 +13,33 @@ public class Stats {
 		System.out.println("Total number of documents in the corpus: "
 				+ reader.maxDoc());
 
-		Terms vocabulary = MultiFields.getTerms(reader, "TEXT");
+        //Print the number of documents containing the term "new" in <field>TEXT</field>.
+        System.out.println("Number of documents containing the term " +
+                "\"new\" for field \"TEXT\": "+reader.docFreq(new Term("TEXT", "new")));
+
+        //Print the total number of occurrences of the term "new"
+        // across all documents for <field>TEXT</field>.
+        System.out.println("Number of occurrences of \"new\" in " +
+                "the field \"TEXT\": "+reader.totalTermFreq(new Term("TEXT","new")));
+
+
+        Terms vocabulary = MultiFields.getTerms(reader, "TEXT");
+        //Print the size of the vocabulary for <field>TEXT</field>,
+        // applicable when the index has only one segment.
 		System.out.println("Size of the vocabulary for this field: "
 				+ vocabulary.size());
 
-		System.out
+        //Print the total number of documents that have at least one term for <field>TEXT</field>
+        System.out
 				.println("Number of documents that have at least one term for this field: "
 						+ vocabulary.getDocCount());
 
-		System.out.println("Number of tokens for this field: "
+        //Print the total number of tokens for <field>TEXT</field>
+        System.out.println("Number of tokens for this field: "
 				+ vocabulary.getSumTotalTermFreq());
 
-		System.out.println("Number of postings for this field: "
+        //Print the total number of postings for <field>TEXT</field>
+        System.out.println("Number of postings for this field: "
 				+ vocabulary.getSumDocFreq());
 
 		/*

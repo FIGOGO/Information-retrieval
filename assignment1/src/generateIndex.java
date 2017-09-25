@@ -1,4 +1,5 @@
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,7 +24,7 @@ public class generateIndex {
 
     public generateIndex(){
         indexPath = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/index";
-        corpusPath = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/smallCorpus";
+        corpusPath = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/corpus";
     }
 
     public HashMap<String, String> parseDOC(StringBuilder sb) {
@@ -64,23 +65,18 @@ public class generateIndex {
         Scanner in = new Scanner(file);
         while(in.hasNext()) {
             try{
-            String next = in.next();
-            if (next.equals("<DOC>")) {
-                StringBuilder sb = new StringBuilder();
-                while (!in.hasNext("</DOC>")) {
-                    String nextT = in.next();
-                    // System.out.println(nextT);
-                    sb.append(nextT);
-                    sb.append(" ");
-                }
+                String next = in.next();
+                if (next.equals("<DOC>")) {
+                    StringBuilder sb = new StringBuilder();
+                    while (!in.hasNext("</DOC>")) {
+                        String nextT = in.next();
+                        sb.append(nextT+" ");
+                    }
                 documents.add(parseDOC(sb));
-                in.next();
-            }
+                }
             } catch (NoSuchElementException e){
                 e.printStackTrace();
             }
-
-
         }
         return documents;
     }
@@ -112,8 +108,9 @@ public class generateIndex {
     }
 
     public void createIndex() throws IOException{
-        Directory dir = FSDirectory.open(Paths.get (indexPath));
+        Directory dir = FSDirectory.open(Paths.get(indexPath));
         Analyzer analyzer = new StandardAnalyzer();
+        Analyzer stopAnalyzer = new StopAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         IndexWriter writer = new IndexWriter(dir, iwc);
@@ -130,8 +127,11 @@ public class generateIndex {
 
     public static void main(String[] args) {
         try{
-            generateIndex generater = new generateIndex();
-            generater.createIndex();
+            generateIndex generator = new generateIndex();
+            System.out.println("Begin to generate index");
+            generator.createIndex();
+            System.out.println("Done for the index");
+            System.out.println("Begin the statistics");
             Stats.main(null);
         } catch (Exception e) {
             e.printStackTrace();

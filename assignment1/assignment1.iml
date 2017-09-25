@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/core/lucene-core-6.2.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/queryparser/lucene-queryparser-6.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,16 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/queryparser/lucene-queryparser-6.2.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/benchmark/lucene-benchmark-6.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/core/lucene-core-6.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +37,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/benchmark/lucene-benchmark-6.2.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/analysis/common/lucene-analyzers-common-6.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
