@@ -88,7 +88,7 @@ public class IndexFiles {
 								+ "rescheduled.");
 		documents.add(document2);
 
-		String indexPath = "/Users/chunguo/Downloads/index";
+		String indexPath = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/index";
 
 		try {
 			System.out.println("Indexing to directory '" + indexPath + "'...");

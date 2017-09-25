@@ -11,14 +11,13 @@ import org.apache.lucene.util.BytesRef;
 
 public class Stats {
 	public static void main(String[] args) throws Exception {
-		String index = "/Users/chunguo/Downloads/index";
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths
-				.get(index)));
+		String index = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/index";
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 
 		System.out.println("Total number of documents in the corpus: "
 				+ reader.maxDoc());
 
-		Terms vocabulary = MultiFields.getTerms(reader, "TEXT");		
+		Terms vocabulary = MultiFields.getTerms(reader, "TEXT");
 		System.out.println("Size of the vocabulary for this field: "
 				+ vocabulary.size());
 
@@ -32,6 +31,7 @@ public class Stats {
 		System.out.println("Number of postings for this field: "
 				+ vocabulary.getSumDocFreq());
 
+		/*
 		TermsEnum iterator = vocabulary.iterator();
 		BytesRef byteRef = null;
 		System.out.println("\n*******Vocabulary-Start**********");
@@ -40,6 +40,7 @@ public class Stats {
 			System.out.println(term);
 		}
 		System.out.println("\n*******Vocabulary-End**********");
+		*/
 
 		reader.close();
 	}

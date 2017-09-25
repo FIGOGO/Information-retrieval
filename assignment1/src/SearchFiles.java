@@ -38,7 +38,7 @@ public class SearchFiles {
 	public static void main(String[] args) throws Exception {
 		String queryString = "police";
 
-		String index = "/Users/chunguo/Downloads/index";
+		String index = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/index";
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths
 				.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
