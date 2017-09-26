@@ -5,14 +5,13 @@ import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by yansong on 9/24/17.
  */
 public class indexComparison {
-    public static void compare(generateIndex g, Analyzer a, String aType) throws Exception {
-        g.createIndex(a, aType);
+    public static void compare(generateIndex g, Analyzer analyzer, String aType) throws Exception {
+        g.createIndex(analyzer, aType);
         Stats.main(null);
         System.out.println("\n");
     }
@@ -24,7 +23,7 @@ public class indexComparison {
         StandardAnalyzer standard = new StandardAnalyzer();
 
         generateIndex generator = new generateIndex();
-        compare(generator, keyWord, "Key Word Analyzer");
+        compare(generator, keyWord, "Keyword Analyzer");
         compare(generator, simple, "Simple Analyzer");
         compare(generator, stop, "Stop Analyzer");
         compare(generator, standard, "Standard Analyzer");

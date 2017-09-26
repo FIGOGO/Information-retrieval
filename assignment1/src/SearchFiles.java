@@ -18,6 +18,8 @@
 import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -36,7 +38,7 @@ public class SearchFiles {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String queryString = "police";
+		String queryString = "the";
 
 		String index = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment1/index";
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths
@@ -55,6 +57,7 @@ public class SearchFiles {
 		int numTotalHits = results.totalHits;
 		System.out.println(numTotalHits + " total matching documents");
 
+		/*
 		//Print retrieved results
 		ScoreDoc[] hits = results.scoreDocs;
 		for(int i=0;i<hits.length;i++){	
@@ -63,6 +66,7 @@ public class SearchFiles {
 			System.out.println("DOCNO: "+doc.get("DOCNO"));
 			System.out.println("TEXT: "+doc.get("TEXT"));
 		}
+		*/
 		
 		reader.close();
 	}
