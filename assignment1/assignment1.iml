@@ -34,13 +34,28 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lucene-6.2.0/analysis/common/lucene-analyzers-common-6.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../commons-lang3-3.6" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/../../commons-lang3-3.6/apidocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../commons-lang3-3.6" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../commons-lang3-3.6" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../commons-lang3-3.6" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>

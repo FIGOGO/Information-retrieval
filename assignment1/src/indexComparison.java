@@ -14,6 +14,7 @@ public class indexComparison {
     public static void compare(generateIndex g, Analyzer a, String aType) throws Exception {
         g.createIndex(a, aType);
         Stats.main(null);
+        System.out.println("\n");
     }
 
     public static void main(String[] args) throws Exception {
