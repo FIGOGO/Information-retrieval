@@ -6,12 +6,8 @@ import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiFields;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -22,33 +18,35 @@ import org.apache.lucene.util.BytesRef;
 
 public class TFDF {
     public static void main(String[] args) throws ParseException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths
-                .get("/Users/chunguo/Downloads/index")));
+        String indexPath = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment2/index";
+        IndexReader reader = DirectoryReader.open(FSDirectory
+                .open(Paths.get(indexPath)));
         IndexSearcher searcher = new IndexSearcher(reader);
 
         /**
          * Get query terms from the query string
          */
-        String queryString = "New York";
+        String queryString = "people mountain people sea";
 
         // Get the preprocessed query terms
         Analyzer analyzer = new StandardAnalyzer();
         QueryParser parser = new QueryParser("TEXT", analyzer);
         Query query = parser.parse(queryString);
-        Set<Term> queryTerms = new LinkedHashSet<Term>();
+        Set<Term> queryTerms = new LinkedHashSet<>();
         searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
         System.out.println("Terms in the query: ");
         for (Term t : queryTerms) {
             System.out.println(t.text());
+            System.out.println(reader.totalTermFreq(t));
         }
-        System.out.println();
+
+
 
         /**
          * Get document frequency
          */
-        int df=reader.docFreq(new Term("TEXT", "police"));
-        System.out.println("Number of documents containing the term \"police\" for field \"TEXT\": "+df);
-        System.out.println();
+        int df = reader.docFreq(new Term("TEXT", queryString));
+        System.out.println("Number of documents containing the term \""+queryString+"\" for field \"TEXT\": "+df);
 
         /**
          * Get document length and term frequency
@@ -57,23 +55,21 @@ public class TFDF {
         // document length
         ClassicSimilarity dSimi = new ClassicSimilarity();
         // Get the segments of the index
-        List<LeafReaderContext> leafContexts = reader.getContext().reader()
-                .leaves();
+        List<LeafReaderContext> leafContextList = reader.leaves();
+
         // Processing each segment
-        for (int i = 0; i < leafContexts.size(); i++) {
+        for (int i = 0; i < leafContextList.size(); i++) {
             // Get document length
-            LeafReaderContext leafContext = leafContexts.get(i);
+            LeafReaderContext leafContext = leafContextList.get(i);
             int startDocNo = leafContext.docBase;
-            int numberOfDoc = leafContext.reader().maxDoc();
+            int numberOfDoc = leafContext.reader().numDocs();
             for (int docId = 0; docId < numberOfDoc; docId++) {
                 // Get normalized length (1/sqrt(numOfTokens)) of the document
                 float normDocLeng = dSimi.decodeNormValue(leafContext.reader()
                         .getNormValues("TEXT").get(docId));
                 // Get length of the document
                 float docLeng = 1 / (normDocLeng * normDocLeng);
-                System.out.println("Length of doc(" + (docId + startDocNo)
-                        + ", " + searcher.doc(docId + startDocNo).get("DOCNO")
-                        + ") is " + docLeng);
+                //System.out.println("Length of doc(" + (docId + startDocNo) + ", " + searcher.doc(docId + startDocNo).get("DOCNO") + ") is " + docLeng);
             }
             System.out.println();
 
@@ -84,9 +80,7 @@ public class TFDF {
             int doc;
             if (de != null) {
                 while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
-                    System.out.println("\"police\" occurs " + de.freq()
-                            + " time(s) in doc(" + (de.docID() + startDocNo)
-                            + ")");
+                    //System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + (de.docID() + startDocNo) + ")");
                 }
             }
         }
