@@ -3,6 +3,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -13,7 +14,9 @@ import org.apache.lucene.util.BytesRef;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -22,64 +25,51 @@ import java.util.List;
  */
 public class easySearch {
 
+
     public static void main(String[] args) throws ParseException, IOException {
         String queryString = "people mountain people sea";
         String pathToIndex = "./index";
+
+        // Create index reader and searcher
+        Directory indexDirectory = FSDirectory.open(Paths.get(pathToIndex));
+        IndexReader reader = DirectoryReader.open(indexDirectory);
+        IndexSearcher searcher = new IndexSearcher(reader);
 
         // Get the preprocessed query terms
         Analyzer analyzer = new StandardAnalyzer();
         QueryParser parser = new QueryParser("TEXT", analyzer);
         Query query = parser.parse(queryString);
-        Directory indexDirectory = FSDirectory.open(Paths.get(pathToIndex));
-        IndexReader reader = DirectoryReader.open(indexDirectory);
+        Set<Term> queryTerms = new LinkedHashSet<>();
+        searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
 
-        //Use DefaultSimilarity.decodeNormValue(…) to decode normalized document length
-        Similarity dSimi = new ClassicSimilarity();
+        // Document frequency
+        for (Term queryT : queryTerms) {
+            int df = reader.docFreq(queryT);
+            System.out.println("Number of documents containing the term " +
+                    "\""+queryT.text()+"\" for field \"TEXT\": "+df);
+        }
 
-        //Get the segments of the index
-        List<LeafReaderContext> leafContexts = reader.getContext().reader().leaves();
+        // Document length and term frequency
+        ClassicSimilarity dSimi = new ClassicSimilarity();
+        // Get index leaf info
+        List<LeafReaderContext> leafContextList = reader.leaves();
+       for (LeafReaderContext leaf : leafContextList) {
+           int docId = 0;
+           // Get normalized length (1/sqrt(numOfTokens)) of the document
+           float normDocLeng = dSimi.decodeNormValue(leaf.reader()
+                   .getNormValues("TEXT").get(docId));
+            // Get length of the document
+            float docLeng = 1 / (normDocLeng * normDocLeng);
 
-        for (int i = 0; i < leafContexts.size(); i++) {
-            LeafReaderContext leafContext = leafContexts.get(i);
-            int startDocNo = leafContext.docBase;
-            int numberOfDoc = leafContext.reader().maxDoc();
-
-            for (int docId = startDocNo; docId < startDocNo + numberOfDoc; docId++) {
-                /*
-                //Get normalized length for each document
-                float normDocLeng = dSimi.decodeNormValue(leafContext.reader()
-                        .getNormValues("TEXT").get(docId - startDocNo));
-                System.out.println("Normalized length for doc(" + docId + ") is " + normDocLeng);
-                */
+        // Get frequency of the term "police" from its postings
+        PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
+                "TEXT", new BytesRef("police"));
+        int doc;
+        if (de != null) {
+            while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
+                System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
             }
         }
-
-    /*
-        //Get the term frequency of "new" within each document containing it for <field>TEXT</field>
-        DocsEnum de = MultiFields.getTermDocsEnum(leafContext.reader(),
-                MultiFields.getLiveDocs(leafContext.reader()), "TEXT", new BytesRef("new"));
-        int doc;
-        while ((doc = de.nextDoc()) != DocsEnum.NO_MORE_DOCS) {
-            System.out.println("\"new\" occurs "+de.freq() + " times in doc(" + (de.docID()+startDocNo)+") for the field TEXT");
-        }
-        }
-        System.out.println(leafContexts);
-
-
-
-        Set<Term> queryTerms = new LinkedHashSet<Term>();
-        query.extractTerms(queryTerms);
-	    for (Term t : queryTerms) {
-            System.out.println(t.text());
-        }
-
-        //Use DefaultSimilarity.decodeNormValue(…) to decode normalized document length
-        DefaultSimilarity dSimi=new DefaultSimilarity();
-
-        //Get the segments of the index
-        List<AtomicReaderContext> leafContexts = reader.getContext().reader().leaves();
-
-
-    */
+       }
     }
 }
