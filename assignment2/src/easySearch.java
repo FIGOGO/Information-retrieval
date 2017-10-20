@@ -25,7 +25,6 @@ import java.util.Set;
  */
 public class easySearch {
 
-
     public static void main(String[] args) throws ParseException, IOException {
         String queryString = "people mountain people sea";
         String pathToIndex = "./index";
@@ -58,18 +57,18 @@ public class easySearch {
            // Get normalized length (1/sqrt(numOfTokens)) of the document
            float normDocLeng = dSimi.decodeNormValue(leaf.reader()
                    .getNormValues("TEXT").get(docId));
-            // Get length of the document
-            float docLeng = 1 / (normDocLeng * normDocLeng);
+           // Get length of the document
+           float docLeng = 1 / (normDocLeng * normDocLeng);
 
-        // Get frequency of the term "police" from its postings
-        PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
-                "TEXT", new BytesRef("police"));
-        int doc;
-        if (de != null) {
-            while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
-                System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
-            }
-        }
+           // Get frequency of the term "police" from its postings
+           PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
+                   "TEXT", new BytesRef("police"));
+           int doc;
+           if (de != null) {
+               while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
+                   System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
+               }
+           }
        }
     }
 }
