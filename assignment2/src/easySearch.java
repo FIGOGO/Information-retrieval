@@ -25,6 +25,10 @@ import java.util.Set;
  *
  */
 public class easySearch {
+    final static String topicFilePath = "/Users/yansong/Programming/search" +
+                "/SONG-information-retrevial/assignment2/topics/topics.51-100";
+    final static String indexDirPath = "/Users/yansong/Programming/search" +
+            "/SONG-information-retrevial/assignment2/index";
 
     public int getScore(Set<Term> querySet) {
         int score = 0;
