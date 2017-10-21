@@ -14,6 +14,7 @@ import org.apache.lucene.util.BytesRef;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,13 @@ import java.util.Set;
  *
  */
 public class easySearch {
+
+    public int getScore(Set<Term> querySet) {
+        int score = 0;
+        for (Term queryTerm : querySet) {
+        }
+        return score;
+    }
 
     public static void main(String[] args) throws ParseException, IOException {
         String queryString = "people mountain people sea";
