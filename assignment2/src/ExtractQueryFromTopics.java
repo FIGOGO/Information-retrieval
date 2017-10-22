@@ -16,7 +16,7 @@ import org.apache.lucene.search.Query;
 public class ExtractQueryFromTopics {
     public static final String pathToIndex = "/Users/yansong/Programming/search/SONG-information-retrevial/assignment2/index";
 
-    ArrayList<Query> extractQuery (String filePath, String beginTag, String endTag, Analyzer analyzer)
+    public static ArrayList<Query> extractQuery (String filePath, String beginTag, String endTag, Analyzer analyzer)
             throws IOException, ParseException {
         ArrayList<String> topics = new ArrayList<>();
         // Open the topic file
@@ -27,7 +27,7 @@ public class ExtractQueryFromTopics {
         String[] rawTopics = StringUtils.substringsBetween(fileContent, beginTag, endTag);
         // Add refined topics to List
         for (String s : rawTopics) {
-            s = StringUtils.substringAfter(s, "Topic:");
+            s = StringUtils.substringAfter(s, ":");
             topics.add(s);
         }
 
@@ -36,7 +36,6 @@ public class ExtractQueryFromTopics {
         for (String queryString : topics) {
             QueryParser parser = new QueryParser("TEXT", analyzer);
             Query query = parser.parse(QueryParser.escape(queryString));
-            System.out.println(query);
             queryList.add(query);
         }
         return queryList;
