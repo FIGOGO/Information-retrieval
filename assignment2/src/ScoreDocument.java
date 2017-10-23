@@ -29,6 +29,10 @@ public class ScoreDocument implements Comparable<ScoreDocument>{
         this.score = s;
         return 0;
     }
+    int addScore(double s) {
+        this.score += s;
+        return 0;
+    }
     Document getDoc() {
         return this.doc;
     }

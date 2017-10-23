@@ -7,11 +7,13 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.spans.SpanWeight;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -49,27 +51,33 @@ public class easySearch {
                     "\""+queryT.text()+"\" for field \"TEXT\": "+df);
         }
 
+        ScoreDocument[] sdArray = new ScoreDocument[reader.numDocs()];
+
         List<LeafReaderContext> leafContextList = reader.leaves();
         ClassicSimilarity dSimi = new ClassicSimilarity();
+        int index = 0;
         for (LeafReaderContext leaf : leafContextList) {
             LeafReader leafReader = leaf.reader();
             int startDocNo = leaf.docBase;
             int numberOfDoc = leaf.reader().numDocs();
             for (int docId = 0; docId < numberOfDoc; docId++) {
-            // Get normalized length (1/sqrt(numOfTokens)) of the document
+                // Get normalized length (1/sqrt(numOfTokens)) of the document
                 float normDocLeng = dSimi.decodeNormValue(leaf.reader()
                         .getNormValues("TEXT").get(docId));
                 // Get length of the document
                 float docLeng = 1 / (normDocLeng * normDocLeng);
+                sdArray[index++] = new ScoreDocument(leafReader.document(docId), docLeng);
             }
 
            // Get frequency of the term "police" from its postings
            PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
-                   "TEXT", new BytesRef("police"));
+                   "TEXT", new BytesRef("people"));
            int doc;
            if (de != null) {
                while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
-                   System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
+                   ScoreDocument sd = sdArray[de.docID()];
+                   sd.setScore(sd.getScore());
+                   //System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
                }
            }
         }
