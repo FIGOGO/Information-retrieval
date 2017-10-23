@@ -26,20 +26,6 @@ public class easySearch {
     final static String indexDirPath = "/Users/yansong/Programming/search" +
             "/SONG-information-retrevial/assignment2/index";
 
-    public int setDocScore(IndexReader reader, Set<Term> querySet, ScoreDocument doc) {
-        int score = 0;
-        int N = reader.numDocs();
-        for (Term queryTerm : querySet) {
-        }
-        return 0;
-    }
-
-    public static ArrayList<ScoreDocument> getAllDocuments (IndexReader reader) throws IOException {
-        ArrayList<ScoreDocument> sdList = new ArrayList<>();
-
-        return sdList;
-    }
-
     public static void main(String[] args) throws ParseException, IOException {
         String queryString = "people mountain people sea";
         String pathToIndex = "./index";
@@ -75,7 +61,6 @@ public class easySearch {
                         .getNormValues("TEXT").get(docId));
                 // Get length of the document
                 float docLeng = 1 / (normDocLeng * normDocLeng);
-                sdList.add(new ScoreDocument(reader.document(docId+startDocNo), docLeng));
             }
 
            // Get frequency of the term "police" from its postings
