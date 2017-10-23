@@ -1,3 +1,4 @@
+import com.sun.tools.hat.internal.server.QueryListener;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -10,11 +11,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.nio.file.Paths.*;
 
 /**
  * Created by yansong on 10/5/17.
@@ -26,7 +28,7 @@ public class searchTRECtopics {
             "/SONG-information-retrevial/assignment2/index";
 
     public static void main(String[] args) throws IOException, ParseException {
-        Directory indexDirectory = FSDirectory.open(get(indexDirPath));
+        Directory indexDirectory = FSDirectory.open(Paths.get(indexDirPath));
         IndexReader reader = DirectoryReader.open(indexDirectory);
         IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -40,6 +42,9 @@ public class searchTRECtopics {
             Set<Term> queryTerms = new LinkedHashSet<>();
             searcher.createNormalizedWeight(q, false).extractTerms(queryTerms);
             queryListSet.add(queryTerms);
+        }
+        for (Set<Term> set : queryListSet) {
+
         }
     }
 }
