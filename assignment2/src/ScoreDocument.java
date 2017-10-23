@@ -10,16 +10,16 @@ public class ScoreDocument implements Comparable<ScoreDocument>{
     Document doc;
     double docLength;
 
-    ScoreDocument(double s, Document d, double l) {
-        score = s;
-        doc = d;
-        docLength = l;
+    public ScoreDocument(double s, Document d, double l) {
+        this.score = s;
+        this.doc = d;
+        this.docLength = l;
     }
-    ScoreDocument(Document d, double l) {
-        new ScoreDocument(0.0, d, l);
+    public ScoreDocument(Document d, double l) {
+        this(0.0, d, l);
     }
-    ScoreDocument(double s, Document d) {
-        new ScoreDocument(s, d, 0.0);
+    public ScoreDocument(double s, Document d) {
+        this(s, d, 0.0);
     }
 
     double getScore() {
@@ -35,6 +35,9 @@ public class ScoreDocument implements Comparable<ScoreDocument>{
     }
     Document getDoc() {
         return this.doc;
+    }
+    double getDocLength(){
+        return this.docLength;
     }
 
     @Override
