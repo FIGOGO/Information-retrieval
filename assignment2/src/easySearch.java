@@ -1,23 +1,19 @@
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
-import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -30,11 +26,18 @@ public class easySearch {
     final static String indexDirPath = "/Users/yansong/Programming/search" +
             "/SONG-information-retrevial/assignment2/index";
 
-    public int getScore(Set<Term> querySet) {
+    public int setDocScore(IndexReader reader, Set<Term> querySet, ScoreDocument doc) {
         int score = 0;
+        int N = reader.numDocs();
         for (Term queryTerm : querySet) {
         }
-        return score;
+        return 0;
+    }
+
+    public static ArrayList<ScoreDocument> getAllDocuments (IndexReader reader) throws IOException {
+        ArrayList<ScoreDocument> sdList = new ArrayList<>();
+
+        return sdList;
     }
 
     public static void main(String[] args) throws ParseException, IOException {
@@ -60,17 +63,20 @@ public class easySearch {
                     "\""+queryT.text()+"\" for field \"TEXT\": "+df);
         }
 
-        // Document length and term frequency
-        ClassicSimilarity dSimi = new ClassicSimilarity();
-        // Get index leaf info
         List<LeafReaderContext> leafContextList = reader.leaves();
-       for (LeafReaderContext leaf : leafContextList) {
-           int docId = 0;
-           // Get normalized length (1/sqrt(numOfTokens)) of the document
-           float normDocLeng = dSimi.decodeNormValue(leaf.reader()
-                   .getNormValues("TEXT").get(docId));
-           // Get length of the document
-           float docLeng = 1 / (normDocLeng * normDocLeng);
+        ClassicSimilarity dSimi = new ClassicSimilarity();
+        for (LeafReaderContext leaf : leafContextList) {
+            LeafReader leafReader = leaf.reader();
+            int startDocNo = leaf.docBase;
+            int numberOfDoc = leaf.reader().numDocs();
+            for (int docId = 0; docId < numberOfDoc; docId++) {
+            // Get normalized length (1/sqrt(numOfTokens)) of the document
+                float normDocLeng = dSimi.decodeNormValue(leaf.reader()
+                        .getNormValues("TEXT").get(docId));
+                // Get length of the document
+                float docLeng = 1 / (normDocLeng * normDocLeng);
+                sdList.add(new ScoreDocument(reader.document(docId+startDocNo), docLeng));
+            }
 
            // Get frequency of the term "police" from its postings
            PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
@@ -81,6 +87,6 @@ public class easySearch {
                    System.out.println("\"police\" occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
                }
            }
-       }
+        }
     }
 }

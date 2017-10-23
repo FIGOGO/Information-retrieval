@@ -8,10 +8,18 @@ import java.util.PriorityQueue;
 public class ScoreDocument implements Comparable<ScoreDocument>{
     double score;
     Document doc;
+    double docLength;
 
-    ScoreDocument(double s, Document d) {
+    ScoreDocument(double s, Document d, double l) {
         score = s;
         doc = d;
+        docLength = l;
+    }
+    ScoreDocument(Document d, double l) {
+        new ScoreDocument(0.0, d, l);
+    }
+    ScoreDocument(double s, Document d) {
+        new ScoreDocument(s, d, 0.0);
     }
 
     double getScore() {
@@ -22,7 +30,7 @@ public class ScoreDocument implements Comparable<ScoreDocument>{
         return 0;
     }
     Document getDoc() {
-        return doc;
+        return this.doc;
     }
 
     @Override
