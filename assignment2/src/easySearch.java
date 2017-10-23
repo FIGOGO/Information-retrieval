@@ -34,7 +34,7 @@ public class easySearch {
     }
 
     public static void main(String[] args) throws ParseException, IOException {
-        String queryString = "people mountain people sea";
+        String queryString = "people mountain sea hello the police man woman";
         String pathToIndex = "./index";
 
         // Create index reader and searcher
@@ -50,14 +50,9 @@ public class easySearch {
         searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
 
         int N = reader.numDocs();  // N
-        ArrayList<ScoreDocument> sdArray = new ArrayList<>();
-        ClassicSimilarity dSimi = new ClassicSimilarity();
-        for (Term queryT : queryTerms) {
-            // Document frequency
-            int df = reader.docFreq(queryT);
-            //System.out.println("Number of documents containing the term " +
-            //       "\""+queryT.text()+"\" for field \"TEXT\": "+df);
+        ArrayList<ScoreDocument> sdArray = new ArrayList<>(N);
         List<LeafReaderContext> leafContextList = reader.leaves();
+        ClassicSimilarity dSimi = new ClassicSimilarity();
         int index = 0;
         for (LeafReaderContext leaf : leafContextList) {
             LeafReader leafReader = leaf.reader();
@@ -74,29 +69,30 @@ public class easySearch {
             }
         }
 
-        for (LeafReaderContext leaf : leafContextList) {
-             // Get frequency of the term "police" from its postings
-            String queryS = StringUtils.substringAfter(queryT.toString(), ":");
-           PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
-                   "TEXT", new BytesRef(queryS));
-           int doc;
-           if (de != null) {
-               while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
-                   ScoreDocument sd = sdArray.get(de.docID());
-                   sd.addScore(easySearch.computeScore(de.freq(), sd.getDocLength(), N, df));
-                   //System.out.println(queryT.toString() + "occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
-               }
-           }
-        }
+        for (Term queryT : queryTerms) {
+            // Document frequency
+            int df = reader.docFreq(queryT);
+            for (LeafReaderContext leaf : leafContextList) {
+                // Get frequency of the term queryT from its postings
+                String queryS = StringUtils.substringAfter(queryT.toString(), ":");
+                PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
+                        "TEXT", new BytesRef(queryS));
+                int doc;
+                if (de != null) {
+                    while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
+                        ScoreDocument sd = sdArray.get(de.docID());
+                        sd.addScore(easySearch.computeScore(de.freq(), sd.getDocLength(), N, df));
+                        //System.out.println(queryT.toString() + "occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
+                    }
+                }
+            }
         }
         PriorityQueue<ScoreDocument> pq = new PriorityQueue<>();
         pq.addAll(sdArray);
         for (int i = 0; i < 100; i++){
             ScoreDocument sd = pq.poll();
-            System.out.println(sd.getScore());
-            System.out.println(sd.getDoc().get("DOCNO"));
+            String docno = sd.getDoc().get("DOCNO");
+            System.out.println("Document " + docno + " get score " + sd.getScore());
         }
-
-
     }
 }
