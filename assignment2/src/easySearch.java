@@ -34,7 +34,7 @@ public class easySearch {
     }
 
     public static void main(String[] args) throws ParseException, IOException {
-        String queryString = "people mountain sea hello the police man woman";
+        String queryString = "police people mountain people sea the";
         String pathToIndex = "./index";
 
         // Create index reader and searcher
@@ -56,7 +56,6 @@ public class easySearch {
         int index = 0;
         for (LeafReaderContext leaf : leafContextList) {
             LeafReader leafReader = leaf.reader();
-            int startDocNo = leaf.docBase;
             int numberOfDoc = leaf.reader().numDocs();
             for (int docId = 0; docId < numberOfDoc; docId++) {
                 // Get normalized length (1/sqrt(numOfTokens)) of the document
@@ -73,14 +72,15 @@ public class easySearch {
             // Document frequency
             int df = reader.docFreq(queryT);
             for (LeafReaderContext leaf : leafContextList) {
+                int startDocNo = leaf.docBase;
                 // Get frequency of the term queryT from its postings
-                String queryS = StringUtils.substringAfter(queryT.toString(), ":");
                 PostingsEnum de = MultiFields.getTermDocsEnum(leaf.reader(),
-                        "TEXT", new BytesRef(queryS));
+                        "TEXT", new BytesRef(queryT.text()));
                 int doc;
                 if (de != null) {
                     while ((doc = de.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
-                        ScoreDocument sd = sdArray.get(de.docID());
+                        ScoreDocument sd = sdArray.get(de.docID()+startDocNo);
+                        //System.out.println(de.docID());
                         sd.addScore(easySearch.computeScore(de.freq(), sd.getDocLength(), N, df));
                         //System.out.println(queryT.toString() + "occurs " + de.freq() + " time(s) in doc(" + de.docID()  + ")");
                     }
