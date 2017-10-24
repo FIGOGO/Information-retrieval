@@ -33,22 +33,7 @@ public class easySearch {
         return Math.log(1+N/df) * tf / len;
     }
 
-    public static void main(String[] args) throws ParseException, IOException {
-        String queryString = "police people mountain people sea the";
-        String pathToIndex = "./index";
-
-        // Create index reader and searcher
-        Directory indexDirectory = FSDirectory.open(Paths.get(pathToIndex));
-        IndexReader reader = DirectoryReader.open(indexDirectory);
-        IndexSearcher searcher = new IndexSearcher(reader);
-
-        // Get the preprocessed query terms
-        Analyzer analyzer = new StandardAnalyzer();
-        QueryParser parser = new QueryParser("TEXT", analyzer);
-        Query query = parser.parse(queryString);
-        Set<Term> queryTerms = new LinkedHashSet<>();
-        searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
-
+    public static ArrayList<ScoreDocument> searchScore(Set<Term> set, IndexReader reader) throws IOException {
         int N = reader.numDocs();  // N
         ArrayList<ScoreDocument> sdArray = new ArrayList<>(N);
         List<LeafReaderContext> leafContextList = reader.leaves();
@@ -64,13 +49,12 @@ public class easySearch {
                 // Get length of the document
                 float docLeng = 1 / (normDocLeng * normDocLeng);
                 Document d = leafReader.document(docId);
-                sdArray.add(index++, new ScoreDocument(d, docLeng));
+                sdArray.add(index++, new ScoreDocument(d, docLeng));  // docLeng
             }
         }
-
-        for (Term queryT : queryTerms) {
+        for (Term queryT : set) {
             // Document frequency
-            int df = reader.docFreq(queryT);
+            int df = reader.docFreq(queryT);  // df
             for (LeafReaderContext leaf : leafContextList) {
                 int startDocNo = leaf.docBase;
                 // Get frequency of the term queryT from its postings
@@ -87,9 +71,30 @@ public class easySearch {
                 }
             }
         }
+        return sdArray;
+    }
+
+    public static void main(String[] args) throws ParseException, IOException {
+        String queryString = "police people mountain people sea the";
+        String pathToIndex = "./index";
+
+        // Create index reader and searcher
+        Directory indexDirectory = FSDirectory.open(Paths.get(pathToIndex));
+        IndexReader reader = DirectoryReader.open(indexDirectory);
+        IndexSearcher searcher = new IndexSearcher(reader);
+
+        // Get the preprocessed query terms
+        Analyzer analyzer = new StandardAnalyzer();
+        QueryParser parser = new QueryParser("TEXT", analyzer);
+        Query query = parser.parse(queryString);
+        Set<Term> queryTerms = new LinkedHashSet<>();
+        searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
+
+        ArrayList<ScoreDocument> sdArray = easySearch.searchScore(queryTerms, reader);
+
         PriorityQueue<ScoreDocument> pq = new PriorityQueue<>();
         pq.addAll(sdArray);
-        for (int i = 0; i < N; i++){
+        for (int i = 0; i < reader.numDocs(); i++){
             ScoreDocument sd = pq.poll();
             String docno = sd.getDoc().get("DOCNO");
             System.out.println("Document " + docno + " get score " + sd.getScore());
