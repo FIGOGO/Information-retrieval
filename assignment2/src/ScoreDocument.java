@@ -45,6 +45,11 @@ public class ScoreDocument implements Comparable<ScoreDocument>{
         return Double.compare(sd.score, this.score);
     }
 
+    @Override
+    public ScoreDocument clone() {
+        return new ScoreDocument(this.doc, this.docLength);
+    }
+
     public static void main(String[] args) {
         PriorityQueue<ScoreDocument> pq = new PriorityQueue<>();
         pq.add(new ScoreDocument(1, new Document()));

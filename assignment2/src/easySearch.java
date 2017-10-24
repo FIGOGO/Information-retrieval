@@ -33,7 +33,7 @@ public class easySearch {
         return Math.log(1+N/df) * tf / len;
     }
 
-    public static ArrayList<ScoreDocument> searchScore(Set<Term> set, IndexReader reader) throws IOException {
+    public static ArrayList<ScoreDocument> extractDocs(IndexReader reader) throws IOException {
         int N = reader.numDocs();  // N
         ArrayList<ScoreDocument> sdArray = new ArrayList<>(N);
         List<LeafReaderContext> leafContextList = reader.leaves();
@@ -52,6 +52,18 @@ public class easySearch {
                 sdArray.add(index++, new ScoreDocument(d, docLeng));  // docLeng
             }
         }
+        return sdArray;
+    }
+
+    public static ArrayList<ScoreDocument> searchScore(ArrayList<ScoreDocument> sdOrigionalArray, Set<Term> set, IndexReader reader) throws IOException {
+        int N = reader.numDocs();  // N
+        ArrayList<ScoreDocument> sdArray = new ArrayList<>(N);
+        // Deep copy
+        for (ScoreDocument sd : sdOrigionalArray) {
+            sdArray.add(sd.clone());
+        }
+        List<LeafReaderContext> leafContextList = reader.leaves();
+        ClassicSimilarity dSimi = new ClassicSimilarity();
         for (Term queryT : set) {
             // Document frequency
             int df = reader.docFreq(queryT);  // df
@@ -90,7 +102,7 @@ public class easySearch {
         Set<Term> queryTerms = new LinkedHashSet<>();
         searcher.createNormalizedWeight(query, false).extractTerms(queryTerms);
 
-        ArrayList<ScoreDocument> sdArray = easySearch.searchScore(queryTerms, reader);
+        ArrayList<ScoreDocument> sdArray = easySearch.searchScore(easySearch.extractDocs(reader), queryTerms, reader);
 
         PriorityQueue<ScoreDocument> pq = new PriorityQueue<>();
         pq.addAll(sdArray);
