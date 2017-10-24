@@ -89,10 +89,14 @@ public class easySearch {
         }
         PriorityQueue<ScoreDocument> pq = new PriorityQueue<>();
         pq.addAll(sdArray);
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < N; i++){
             ScoreDocument sd = pq.poll();
             String docno = sd.getDoc().get("DOCNO");
             System.out.println("Document " + docno + " get score " + sd.getScore());
+            if (sd.getScore() == 0) {
+                System.out.println("In total "+(i+1)+" documents have positive evaluation score.");
+                break;
+            }
         }
     }
 }
