@@ -37,12 +37,15 @@ public class searchTRECtopics {
         PrintWriter printWriter = new PrintWriter(fileWriter);
         int topicId = 51;
         for (PriorityQueue<ScoreDocument> pq : pqList) {
-            for (int rank = 1; rank <= 1000 && (pq.peek()!=null); rank++) {
+            for (int rank = 1; rank <= 1000; rank++) {
                 ScoreDocument sd = pq.poll();
+                if (sd.getScore() == 0) break;
                 printWriter.printf("%2d %d %s %4d %2.5f %s \n",
-                        topicId++, 0, sd.getDoc().get("DOCNO"), rank, sd.score, method+"_"+queryType);
+                        topicId, 0, sd.getDoc().get("DOCNO"), rank, sd.getScore(), method+"_"+queryType);
             }
+            topicId++;
         }
+        printWriter.close();
     }
 
     public static void searchTopic(ArrayList<Query> queryList, IndexReader reader, String queryType) throws IOException {
