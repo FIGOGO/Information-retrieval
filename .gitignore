@@ -1,6 +1,7 @@
 index/
 corpus/
 smallCorpus/
+author_index/
 .idea
 **/.idea
 **/*.xml
