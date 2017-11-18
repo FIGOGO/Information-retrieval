@@ -55,7 +55,7 @@ public class AuthorRank {
         HashMap<String, String> vMap = new HashMap<>();
         getGraph(filename, graph, vMap);
 
-        double alpha = 0.1;
+        double alpha = 0.15;
         PageRank<String, String> ranker = new PageRank<String, String>(graph, alpha);
         ranker.evaluate();
 

@@ -88,7 +88,7 @@ public class AuthorRankwithQuery {
             vMapReversed.put(value, key);
         }
 
-        double alpha = 0.1;
+        double alpha = 0.15;
         HashMap<String, Double> priorMap1 = new HashMap<>();
         getPrior(q1, priorMap1, vMapReversed);
         Transformer<String, Double> transformer1 = MapTransformer.getInstance(priorMap1);
