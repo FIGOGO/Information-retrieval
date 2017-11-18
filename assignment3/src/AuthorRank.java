@@ -9,11 +9,11 @@ import java.util.*;
  * Created by yansong on 11/16/17.
  */
 public class AuthorRank {
-    final private static String filename = "/Users/yansong/Programming" +
+    final static String filename = "/Users/yansong/Programming" +
             "/search/SONG-information-retrevial/assignment3/author.net.txt";
 
-    AuthorRank(String filename) {
-
+    public static String getFilePath() {
+        return filename;
     }
 
     public static void getGraph(String filename, DirectedSparseGraph<String, String > graph,
@@ -54,7 +54,7 @@ public class AuthorRank {
         DirectedSparseGraph graph = new DirectedSparseGraph();
         HashMap<String, String> vMap = new HashMap<>();
         getGraph(filename, graph, vMap);
-        
+
         double alpha = 0.1;
         PageRank<String, String> ranker = new PageRank<String, String>(graph, alpha);
         ranker.evaluate();
