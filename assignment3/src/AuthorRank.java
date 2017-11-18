@@ -1,13 +1,9 @@
 import edu.uci.ics.jung.algorithms.scoring.PageRank;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created by yansong on 11/16/17.
@@ -63,12 +59,17 @@ public class AuthorRank {
         double alpha = 0.1;
         PageRank<String, String> ranker = new PageRank<String, String>(graph, alpha);
         ranker.evaluate();
+        // TreeMap with key decreasing order
+        Map<Double, String> tMap = new TreeMap<>(Collections.reverseOrder());
         for (String v : vMap.keySet()) {
             double score = ranker.getVertexScore(v);
-            if (score > 0.005) {
-                System.out.println(vMap.get(v));
-                System.out.println(score);
-            }
+            tMap.put(score, vMap.get(v));
+        }
+        Set s = tMap.entrySet();
+        Iterator iterator = s.iterator();
+        for (int i = 0; i < 10; i++) {
+            Map.Entry me = (Map.Entry) iterator.next();
+            System.out.println("Author " + me.getValue() + " has score " + me.getKey());
         }
     }
 
