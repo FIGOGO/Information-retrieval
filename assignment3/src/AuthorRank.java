@@ -17,8 +17,7 @@ public class AuthorRank {
     }
 
     public static void getGraph(String filename, DirectedSparseGraph<String, String > graph,
-                                Map<String, String> vMap,
-                                Map<String, String> eMap) throws IOException {
+                                Map<String, String> vMap) throws IOException {
         FileReader fr = new FileReader(filename);
         BufferedReader br = new BufferedReader(fr);
         String line = br.readLine();
@@ -54,11 +53,12 @@ public class AuthorRank {
     public static void main(String[] args) throws IOException {
         DirectedSparseGraph graph = new DirectedSparseGraph();
         HashMap<String, String> vMap = new HashMap<>();
-        HashMap<String, String> eMap = new HashMap<>();
-        getGraph(filename, graph, vMap, eMap);
+        getGraph(filename, graph, vMap);
+        
         double alpha = 0.1;
         PageRank<String, String> ranker = new PageRank<String, String>(graph, alpha);
         ranker.evaluate();
+
         // TreeMap with key decreasing order
         Map<Double, String> tMap = new TreeMap<>(Collections.reverseOrder());
         for (String v : vMap.keySet()) {
